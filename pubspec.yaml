@@ -1,0 +1,70 @@
+name: saveit
+description: "A budget management and expense tracking app"
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.8.1
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  firebase_core: ^4.0.0
+  firebase_auth: ^6.0.1
+  firebase_messaging: ^16.0.0
+  firebase_analytics: ^12.0.0
+  cloud_firestore: ^6.0.0
+  http: ^1.2.2
+  googleapis_auth: ^2.0.0
+  google_generative_ai: ^0.4.5 
+  get: ^4.7.2
+  firebase_storage: ^13.0.1
+  image_picker: ^1.2.0
+  provider: ^6.1.5+1
+  intl: ^0.20.2
+  flutter_facebook_auth: ^7.1.2
+  lottie: ^3.3.2
+  google_sign_in: ^6.2.1
+  shared_preferences: ^2.5.3
+  get_storage: ^2.1.1
+  audioplayers: ^6.5.1
+  fl_chart: ^0.69.0
+  workmanager: ^0.9.0+3
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  flutter_launcher_icons: ^0.14.1
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/images/logo.png
+    - assets/images/background.jpg
+    - assets/images/forgot_password.jpg
+    - assets/images/app_icon.png
+    - assets/lottie/loading.json
+    - assets/lottie/congratulations.json
+    - assets/sounds/money-income.mp3
+    - assets/sounds/money-expense.mp3
+
+  fonts:
+    - family: Montserrat
+      fonts:
+        - asset: assets/fonts/Montserrat-Regular.ttf
+        - asset: assets/fonts/Montserrat-Bold.ttf
+          weight: 800
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/app_icon.png"
+  adaptive_icon_foreground: "assets/images/app_icon.png"
+  adaptive_icon_background: "#00000000" 
+  adaptive_icon_foreground_inset: 20
+  min_sdk_android: 21
+  remove_alpha_ios: true
