@@ -1,249 +1,115 @@
-<div align="center">
-
 # SaveIt
 
-Smart, simple, and secure personal finance management built with Flutter and Firebase.
-
-![Platform](https://img.shields.io/badge/platform-Android%20%7C%20iOS-blue)
-![State](https://img.shields.io/badge/state-GetX%20%2B%20Provider-7B61FF)
-![Architecture](https://img.shields.io/badge/architecture-Controller%20%2F%20Service%20%2B%20Provider-success)
-![Firebase](https://img.shields.io/badge/backend-Firebase-orange)
-![Background](https://img.shields.io/badge/background-Workmanager-9cf)
-
-</div>
-
-## Overview
-
-SaveIt helps you track income, expenses, savings, and installments—all in one clean, fast, and privacy‑friendly app. The current codebase uses GetX for navigation/controllers, Provider for app state, and Firebase for auth and data.
+SaveIt is a Flutter personal finance app for tracking income, expenses, installments, and spending trends. Its dashboard brings together the current balance, paid installments, and links to each financial screen.
 
 ## Features
 
-- Secure authentication: Email/Password and Google sign‑in
-- Dashboard: Balance, total income, and expenses at a glance
-- Income management: Add, update, delete, and list incomes
-- Expense tracking: Categorized spending with full CRUD
-- Savings goals: Track progress toward targets (with daily background calculations)
-- Installments: Manage monthly payments and remaining balance
-- Real‑time sync via Firebase Firestore
-- Light/Dark themes and responsive UI
-- Optional AI chat (Gemini) for tips and guidance
+- Record, edit, and delete income and expenses with dates, notes, and categories.
+- Track upcoming and paid installments, change payment status, and review installment totals.
+- Compare daily expenses and review weekly charts and monthly savings summaries.
+- Create an email account, verify the email address, reset a password, sign in with Google, or continue as a guest.
+- Manage profile details, change a password, delete an account, and choose English or Arabic.
+- Chat with SaveIt using built-in responses. Signed-in accounts can keep chat history locally. The repository includes a placeholder for the existing Gemini fallback.
 
 ## Screenshots
 
-<p align="center">
-View a few key flows and screens from the app.
-</p>
+These screenshots are included in the repository.
 
-<table>
-   <tr>
-      <td align="center">
-         <img src="assets/screenshots/spalsh_screen.jpg" alt="Splash Screen" width="230" />
-         <br/><sub>Splash</sub>
-      </td>
-      <td align="center">
-         <img src="assets/screenshots/login_screen.jpg" alt="Login Screen" width="230" />
-         <br/><sub>Login</sub>
-      </td>
-      <td align="center">
-         <img src="assets/screenshots/signup.jpg" alt="Sign Up" width="230" />
-         <br/><sub>Sign Up</sub>
-      </td>
-      <td align="center">
-         <img src="assets/screenshots/home_screen.jpg" alt="Home Screen" width="230" />
-         <br/><sub>Home</sub>
-      </td>
-   </tr>
-   <tr>
-      <td align="center">
-         <img src="assets/screenshots/income_screen.jpg" alt="Income List" width="230" />
-         <br/><sub>Income</sub>
-      </td>
-      <td align="center">
-         <img src="assets/screenshots/add_income.jpg" alt="Add Income" width="230" />
-         <br/><sub>Add Income</sub>
-      </td>
-      <td align="center">
-         <img src="assets/screenshots/expense_screen.jpg" alt="Expense List" width="230" />
-         <br/><sub>Expenses</sub>
-      </td>
-      <td align="center">
-         <img src="assets/screenshots/add_expense.jpg" alt="Add Expense" width="230" />
-         <br/><sub>Add Expense</sub>
-      </td>
-   </tr>
-   <tr>
-      <td align="center">
-         <img src="assets/screenshots/saving_screen.jpg" alt="Savings" width="230" />
-         <br/><sub>Savings</sub>
-      </td>
-      <td align="center">
-         <img src="assets/screenshots/add_installment.jpg" alt="Add Installment" width="230" />
-         <br/><sub>Add Installment</sub>
-      </td>
-      <td align="center">
-         <img src="assets/screenshots/installment_screen.jpg" alt="Installments" width="230" />
-         <br/><sub>Installments</sub>
-      </td>
-      <td align="center">
-         <img src="assets/screenshots/balance.jpg" alt="Balance" width="230" />
-         <br/><sub>Balance</sub>
-      </td>
-   </tr>
-   <tr>
-      <td align="center">
-         <img src="assets/screenshots/profile_screen.jpg" alt="Profile" width="230" />
-         <br/><sub>Profile</sub>
-      </td>
-      <td align="center">
-         <img src="assets/screenshots/setting_screen.jpg" alt="Settings" width="230" />
-         <br/><sub>Settings</sub>
-      </td>
-      <td align="center">
-         <img src="assets/screenshots/saveit_chat.jpg" alt="SaveIt Chat" width="230" />
-         <br/><sub>SaveIt Chat</sub>
-      </td>
-      <td align="center">
-         <img src="assets/screenshots/forgot_password.jpg" alt="Forgot Password" width="230" />
-         <br/><sub>Forgot Password</sub>
-      </td>
-   </tr>
-</table>
+| Dashboard | Expenses | Savings |
+| --- | --- | --- |
+| <img src="assets/screenshots/home_screen.jpg" alt="SaveIt dashboard" width="230"> | <img src="assets/screenshots/expense_screen.jpg" alt="Expense list" width="230"> | <img src="assets/screenshots/saving_screen.jpg" alt="Savings overview" width="230"> |
 
-## Tech Stack
-
-- Flutter (Dart)
-- Firebase: Authentication, Firestore, Storage
-- State management: GetX (navigation/controllers) + Provider (app state)
-- Local storage: GetStorage, SharedPreferences
-- Background tasks: Workmanager
-- Charts & UI: fl_chart, lottie
-- Media: image_picker, audioplayers
+| Sign in | Installments | Profile |
+| --- | --- | --- |
+| <img src="assets/screenshots/login_screen.jpg" alt="Sign-in screen" width="230"> | <img src="assets/screenshots/installment_screen.jpg" alt="Installment list" width="230"> | <img src="assets/screenshots/profile_screen.jpg" alt="Profile screen" width="230"> |
 
 ## Architecture
 
-Controller/Service architecture with Providers for shared app state. Screens live under `lib/view/`, business logic sits in GetX controllers and service classes (Firebase-backed), with some repositories.
+SaveIt uses feature-first Clean Architecture with Cubits as ViewModels. Screens and widgets render state, collect form input, and handle visual feedback. Cubits coordinate streams, validation, and mutations through repository contracts. Data sources handle Firebase and local persistence, including mapping Firestore documents into values the presentation layer can use.
 
-```
+```text
 lib/
-├── main.dart                      # App entry (GetMaterialApp + Providers)
-├── firebase_options.dart          # FlutterFire config (generated)
-├── controller/                    # GetX controllers (login, settings, nav, etc.)
+├── main.dart
+├── firebase_options.dart
+├── app/
+│   ├── app.dart
+│   ├── bootstrap.dart
+│   ├── di/
+│   ├── localization/
+│   ├── router/
+│   └── theme/
 ├── core/
-│   ├── constants/                 # Constants & app-level configs
-│   ├── helper/                    # Utilities (loading, validation, etc.)
-│   ├── model/                     # Core/shared models (if present)
-│   ├── provider/                  # ChangeNotifiers (User, Currency, Theme, Firestore)
-│   └── services/                  # Firebase services (auth, user, income, expense, savings)
-├── model/                         # Feature models (e.g., savings_model.dart)
-├── repository/                    # Repository pattern (e.g., auth_repo + impl)
-├── services/                      # App services & background tasks (savings_service, work manager)
-├── view/                          # UI screens (login, home, income, expense, installments, savings, chat, settings, profile, splash)
-│   ├── Add_installments_screen/
-│   ├── Add_new_expenses/
-│   ├── Add_new_income_screen/           
-│   ├── Balance_screen/
-│   ├── Create_account_screen/
-│   ├── Edit_expense_screen/
-│   ├── Edit_income_screen/           
-│   ├── Expenses_screen/
-│   ├── Forget_password_screen/
-│   ├── Home_screen/
-│   ├── Income_screen/           
-│   ├── Installments_screen/
-│   ├── Log_in_screen/
-│   ├── Profile_screen/
-│   ├── Saveit_chat_screen/           
-│   ├── Savings_screen/
-│   ├── Settings_screen/
-│   └── Splash_screen/ 
-└── widgets/                       # Reusable UI components
+│   ├── errors/
+│   ├── utils/
+│   └── widgets/
+└── features/
+    ├── auth/
+    ├── balance/
+    ├── chat/
+    ├── dashboard/
+    ├── expenses/
+    ├── income/
+    ├── installments/
+    ├── profile/
+    ├── savings/
+    ├── settings/
+    └── splash/
 ```
 
-### Data flow
-- View (GetX routes) → GetX Controllers / Providers → Services → Firebase (Auth/Firestore/Storage)
-- Providers expose app-wide reactive state (User, Currency, Theme)
-- Workmanager schedules background savings calculations via task manager
+Features with storage have `data/`, `domain/`, and `presentation/` layers. Dashboard, settings, and splash contain presentation code. GoRouter declares screen routes and checks the current session before opening protected pages. GetIt owns dependencies, and Injectable generates registrations in `lib/app/di/injection.config.dart`. The app owns shared profile and settings state. Individual routes own their form and financial Cubits.
 
-### Navigation & Localization
-- GetX navigation via `GetMaterialApp` and `getPages`
-- English/Arabic localization (see `view/Settings_screen/widgets/translations.dart`)
+## Technology
 
-## Getting Started
+| Area | Implementation |
+| --- | --- |
+| App and UI | Flutter 3.50, Dart 3.14, Material UI, Lottie, FL Chart |
+| State and navigation | Flutter BLoC, Cubit, GoRouter |
+| Dependency injection | GetIt, Injectable, build_runner |
+| Backend | Firebase Authentication, Cloud Firestore, Cloud Storage |
+| Local persistence and media | SharedPreferences, GetStorage, image_picker, audioplayers |
+
+## Getting started
 
 ### Prerequisites
 
-- Flutter SDK: https://flutter.dev/docs/get-started/install
-- A Firebase project (or use the included dev config)
+- Flutter 3.50.0 stable with Dart 3.14.0.
+- An Android SDK with platform and build tools 36, Flutter’s NDK version, and a JDK 17 or newer supported by Gradle.
+- The [Firebase CLI and FlutterFire CLI](https://firebase.google.com/docs/flutter/setup) if configuring a Firebase project.
+- For an iOS build, macOS with Xcode 26.2 or newer, Swift Package Manager, and an iOS 15 or later target. Verify Firebase and Google Sign-In provisioning for the iOS app in Xcode.
 
-### Clone and install
+Android uses Gradle 9.6.0, AGP 9.3.1, built-in Kotlin 2.4.20, and Google Services 4.4.4. The Java and Kotlin bytecode targets are 17. The wrapper selects the Gradle distribution. The audio plugin’s test integration currently relies on AGP’s legacy DSL compatibility flag. Kotlin compiles in the Gradle process with incremental compilation disabled to avoid the Windows compiler-cache failure.
 
-```bash
+### Install and run
+
+Complete Firebase setup before the first run.
+
+```sh
 git clone https://github.com/hossamelshafay/saveit.git
 cd saveit
+flutter doctor -v
 flutter pub get
+dart run build_runner build
+flutter run
 ```
 
 ### Firebase setup
 
-This repo includes `firebase_options.dart` and Android `google-services.json` for development. To connect your own Firebase project:
+1. Obtain access to the existing SaveIt Firebase project before setting up a shared environment. For a separate development project, register an Android app with package `com.example.final_project`, an iOS app with bundle ID `com.example.saveltApp`, and a web app if needed.
+2. Run `flutterfire configure` from the project root and select the intended project and platforms. Keep `lib/firebase_options.dart`, `android/app/google-services.json`, and any Apple `GoogleService-Info.plist` files local. Generate or obtain them before running the app or tests. Keep service-account credentials and signing keys outside the repository.
+3. Enable Email/Password, Google, and Anonymous sign-in in Firebase Authentication. Register the Android signing certificate fingerprints for Google Sign-In and configure its OAuth client for each platform you use.
+4. Provision Cloud Firestore and Cloud Storage with access rules scoped to authenticated users and their own records. The app uses the `users` collection, its `incomes`, `expenses`, `installments`, and `savings` subcollections, and the storage path `users/{uid}/profile.jpg`.
 
-1. Create a Firebase project and enable:
-   - Authentication (Email/Password, Google)
-   - Firestore Database
-   - Storage
-2. Add Android and iOS apps in Firebase Console.
-3. Download and place the platform files:
-   - `android/app/google-services.json`
-   - `ios/Runner/GoogleService-Info.plist`
-4. Optionally regenerate `firebase_options.dart` using FlutterFire CLI.
+SaveIt Chat uses its built-in replies by default. For local development, supply `SAVEIT_GEMINI_API_KEY` through an ignored JSON file with `flutter run --dart-define-from-file=.env.gemini.json`. Dart defines are readable from app binaries. Use a backend for shared or production builds that require a private Gemini credential.
 
-### Background tasks (Android)
-- Uses `workmanager` for daily savings calculations
-- Min SDK 21; ensure initialization is not obfuscated by ProGuard/R8
+### Validate and build
 
-### Run
-
-```bash
-flutter run
-```
-
-Run tests:
-
-```bash
+```sh
+flutter pub get
+dart run build_runner build
+dart format lib test
+flutter analyze
 flutter test
+flutter build apk --debug
 ```
 
-## Development Notes
-
-- App bootstraps Firebase + GetStorage, then initializes background tasks (`SavingsTaskManager.initialize()`)
-- Providers registered via `MultiProvider` in `main.dart`
-- GetX controllers are initialized early (`Get.put`) for Auth, Settings, and Logout flows
-
-## Roadmap
-
-- [ ] Enhanced charts/analytics on dashboard
-- [ ] Advanced filters and search
-- [ ] Offline caching and sync
-- [ ] E2E and widget tests coverage expansion
-- [ ] Unify duplicated services and move business logic behind repositories
-
-## Contributing
-
-Contributions are welcome! If you’d like to improve SaveIt:
-
-1. Fork the repo
-2. Create a feature branch: `git checkout -b feat/your-feature`
-3. Commit your changes: `git commit -m "feat: add your feature"`
-4. Push the branch: `git push origin feat/your-feature`
-5. Open a Pull Request
-
-Please keep controllers lean, place Firebase logic in services, and avoid tight coupling between views and data sources.
-
-## License
-
-This project is available under the terms of the LICENSE file in this repository.
-
----
-
-If you found this project helpful, consider giving it a ⭐ to support the work.
-#
+Flutter writes the debug APK to `build/app/outputs/flutter-apk/app-debug.apk`. On Windows, keep the workspace and Dart’s package cache on the same drive to avoid Kotlin’s cross-drive incremental compilation error. Set `PUB_CACHE` for the current shell before running `flutter pub get` if needed.
