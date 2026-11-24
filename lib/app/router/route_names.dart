@@ -1,0 +1,22 @@
+abstract final class RouteNames {
+  static const splash = '/splash';
+  static const login = '/login';
+  static const register = '/register';
+  static const forgotPassword = '/forgot-password';
+  static const home = '/home';
+  static const settings = '/settings';
+  static const help = '/help';
+  static const about = '/about';
+  static const profile = '/profile';
+  static const personalInfo = '/personal-info';
+  static const changePassword = '/change-password';
+  static const deleteAccount = '/delete-account';
+  static const balance = '/balance';
+  static const income = '/income';
+  static const incomeForm = '/income/form';
+  static const expenses = '/expenses';
+  static const expenseForm = '/expenses/form';
+  static const installments = '/installments';
+  static const installmentForm = '/installments/form';
+  static const savings = '/savings';
+}

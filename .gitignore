@@ -43,3 +43,32 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Local Firebase configuration and credentials
+/lib/firebase_options.dart
+/android/app/google-services.json
+/ios/Runner/GoogleService-Info.plist
+/macos/Runner/GoogleService-Info.plist
+.env
+.env.*
+!.env.example
+*firebase-adminsdk*.json
+*firebase-service-account*.json
+*service-account*.json
+*service_account*.json
+*.pem
+*.p12
+*.jks
+*.keystore
+key.properties
+local.properties
+
+# Local build outputs and JVM diagnostics
+/android/build/
+hs_err_pid*
+replay_pid*
+java_pid*.hprof
+
+# Machine-specific editor settings
+/.vscode/settings.json
+/.vscode/launch.json
