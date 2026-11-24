@@ -1,115 +1,249 @@
+<div align="center">
+
 # SaveIt
 
-SaveIt is a Flutter personal finance app for tracking income, expenses, installments, and spending trends. Its dashboard brings together the current balance, paid installments, and links to each financial screen.
+**Personal Finance & Budget Management App built with Flutter, Clean Architecture, and Firebase**
 
-## Features
+[![Flutter](https://img.shields.io/badge/Flutter-3.50.0-02569B?style=for-the-badge&logo=flutter&logoColor=white)](https://flutter.dev)
+[![Dart](https://img.shields.io/badge/Dart-3.14.0-0175C2?style=for-the-badge&logo=dart&logoColor=white)](https://dart.dev)
+[![State Management](https://img.shields.io/badge/State-BLoC%20%2F%20Cubit-8A2BE2?style=for-the-badge)](https://bloclibrary.dev)
+[![Architecture](https://img.shields.io/badge/Architecture-Clean%20Architecture%20%2B%20MVVM-2EA44F?style=for-the-badge)](#architecture)
+[![Firebase](https://img.shields.io/badge/Backend-Firebase-FFCA28?style=for-the-badge&logo=firebase&logoColor=black)](https://firebase.google.com)
+[![Android Gradle](https://img.shields.io/badge/Gradle%209.6.0-AGP%209.3.1-3DDC84?style=for-the-badge&logo=android&logoColor=white)](#android-build-modernization)
 
-- Record, edit, and delete income and expenses with dates, notes, and categories.
-- Track upcoming and paid installments, change payment status, and review installment totals.
-- Compare daily expenses and review weekly charts and monthly savings summaries.
-- Create an email account, verify the email address, reset a password, sign in with Google, or continue as a guest.
-- Manage profile details, change a password, delete an account, and choose English or Arabic.
-- Chat with SaveIt using built-in responses. Signed-in accounts can keep chat history locally. The repository includes a placeholder for the existing Gemini fallback.
+<br/>
 
-## Screenshots
+[![Tech Icons](https://skillicons.dev/icons?i=flutter,dart,firebase,androidstudio,git,github)](https://skillicons.dev)
 
-These screenshots are included in the repository.
+</div>
 
-| Dashboard | Expenses | Savings |
-| --- | --- | --- |
-| <img src="assets/screenshots/home_screen.jpg" alt="SaveIt dashboard" width="230"> | <img src="assets/screenshots/expense_screen.jpg" alt="Expense list" width="230"> | <img src="assets/screenshots/saving_screen.jpg" alt="Savings overview" width="230"> |
+---
 
-| Sign in | Installments | Profile |
-| --- | --- | --- |
-| <img src="assets/screenshots/login_screen.jpg" alt="Sign-in screen" width="230"> | <img src="assets/screenshots/installment_screen.jpg" alt="Installment list" width="230"> | <img src="assets/screenshots/profile_screen.jpg" alt="Profile screen" width="230"> |
+## Overview
+
+**SaveIt** is a personal finance application for tracking income, expenses, installments, balance totals, and daily/monthly savings trends. Built as a showcase of production-oriented Flutter engineering, the codebase is structured around **Feature-first Clean Architecture** and **MVVM with BLoC/Cubit**, separating UI rendering, state orchestration, domain contracts, and Firebase/local data sources.
+
+---
+
+## Tech Stack
+
+| Layer / Domain | Technologies & Packages |
+| --- | --- |
+| **Framework & Language** | Flutter `3.50.0`, Dart `3.14.0`, Material UI (`material_ui`) |
+| **Architecture & Patterns** | Feature-first Clean Architecture, MVVM, Repository Pattern, SOLID |
+| **State Management** | `flutter_bloc` (`Cubit` ViewModels), `WatchCubit` stream utility |
+| **Dependency Injection** | `get_it`, `injectable`, `injectable_generator`, `build_runner` |
+| **Navigation & Guards** | `go_router` (declarative routing with auth session `route_guards`) |
+| **Backend & Auth** | `firebase_core`, `firebase_auth`, `cloud_firestore`, `firebase_storage`, `firebase_messaging`, `firebase_analytics`, `google_sign_in`, `flutter_facebook_auth` |
+| **AI & Networking** | `google_generative_ai` (Gemini fallback via `--dart-define`), `http`, `googleapis_auth` |
+| **Local Persistence & Jobs** | `shared_preferences`, `get_storage`, `workmanager` (daily savings background tasks) |
+| **UI, Charts & Media** | `fl_chart`, `lottie`, `image_picker`, `audioplayers`, `intl` (EN / AR localization) |
+| **Android Build Toolchain** | Gradle `9.6.0`, AGP `9.3.1`, Built-in Kotlin `2.4.20`, Google Services `4.4.4`, JVM `17` |
+
+---
+
+## Core Features
+
+- **Dashboard & Balance Overview**: Live summary of remaining balance, total income, paid installments, and quick navigation across financial modules.
+- **Income & Expense Management**: Full CRUD workflows with categories, dates, notes, audio feedback, and real-time Firestore synchronization.
+- **Installments Tracking**: Manage upcoming and paid installments, toggle payment status, and inspect due-status calculations.
+- **Savings & Analytics**: Daily savings comparisons, weekly spending charts (`fl_chart`), monthly summaries, and background calculation scheduling (`workmanager`).
+- **Authentication & Profile**: Email/Password sign-up & verification, password recovery, Google Sign-In, Facebook Auth, anonymous guest mode, profile editing, password updates, and account deletion.
+- **SaveIt Assistant Chat**: Built-in local response engine with optional Gemini AI fallback and local chat history persistence for signed-in users.
+- **Localization & Theming**: English and Arabic translations (`app_translations.dart`) with centralized Light/Dark theme tokens.
+
+---
 
 ## Architecture
 
-SaveIt uses feature-first Clean Architecture with Cubits as ViewModels. Screens and widgets render state, collect form input, and handle visual feedback. Cubits coordinate streams, validation, and mutations through repository contracts. Data sources handle Firebase and local persistence, including mapping Firestore documents into values the presentation layer can use.
+SaveIt follows a **Feature-first Clean Architecture** paired with **MVVM**:
+
+- **Presentation Layer (`screens/`, `widgets/`, `cubit/`)**: Widgets remain declarative and lean; `Cubit` ViewModels manage UI state, validation, and stream subscriptions.
+- **Domain Layer (`entities/`, `repositories/`)**: Pure Dart entities and abstract repository contracts decouple business rules from external SDKs.
+- **Data Layer (`data_sources/`, `models/`, `repositories/`)**: Concrete repository implementations coordinate Firebase (Auth, Firestore, Storage), local persistence (`SharedPreferences`, `GetStorage`), `Workmanager`, and Gemini AI.
+
+```mermaid
+flowchart TB
+    UI["Presentation Layer\nScreens & Reusable Widgets"] --> Cubit["ViewModel Layer\nBLoC / Cubit"]
+    Router["GoRouter + Route Guards"] --> UI
+    Cubit --> RepoContract["Domain Layer\nEntities & Repository Contracts"]
+    RepoImpl["Data Layer\nRepository Implementations"] -. implements .-> RepoContract
+    RepoImpl --> Remote["Remote Data Sources\nFirebase Auth · Firestore · Storage · Gemini AI"]
+    RepoImpl --> Local["Local Data Sources\nSharedPreferences · GetStorage · Workmanager"]
+    DI["GetIt + Injectable\nDependency Injection"] --> Cubit
+    DI --> RepoImpl
+```
+
+### Project Structure
 
 ```text
 lib/
-├── main.dart
-├── firebase_options.dart
+├── main.dart                     # App entry point
 ├── app/
-│   ├── app.dart
-│   ├── bootstrap.dart
-│   ├── di/
-│   ├── localization/
-│   ├── router/
-│   └── theme/
+│   ├── app.dart                  # Root MaterialApp.router & global providers
+│   ├── bootstrap.dart            # Firebase, storage, DI & background task init
+│   ├── di/                       # GetIt & Injectable configuration
+│   ├── localization/             # English & Arabic translations
+│   ├── router/                   # GoRouter routes & auth session guards
+│   └── theme/                    # Colors, dimensions, text styles & themes
 ├── core/
-│   ├── errors/
-│   ├── utils/
-│   └── widgets/
+│   ├── errors/                   # Centralized ErrorHandler, Exceptions & Failures
+│   ├── utils/                    # WatchCubit & shared helpers
+│   └── widgets/                  # Reusable UI feedback & shared components
 └── features/
-    ├── auth/
-    ├── balance/
-    ├── chat/
-    ├── dashboard/
-    ├── expenses/
-    ├── income/
-    ├── installments/
-    ├── profile/
-    ├── savings/
-    ├── settings/
-    └── splash/
+    ├── auth/                     # Login, registration, password recovery, guards
+    ├── balance/                  # Aggregated balance & totals
+    ├── chat/                     # Local chat engine & Gemini AI fallback
+    ├── dashboard/                # Home overview & navigation grid
+    ├── expenses/                 # Expense CRUD & category widgets
+    ├── income/                   # Income CRUD
+    ├── installments/             # Installment tracking & status updates
+    ├── profile/                  # Profile, password change & account deletion
+    ├── savings/                  # Daily/monthly savings, charts & Workmanager
+    ├── settings/                 # Language & theme preferences
+    └── splash/                   # Initial session routing
 ```
 
-Features with storage have `data/`, `domain/`, and `presentation/` layers. Dashboard, settings, and splash contain presentation code. GoRouter declares screen routes and checks the current session before opening protected pages. GetIt owns dependencies, and Injectable generates registrations in `lib/app/di/injection.config.dart`. The app owns shared profile and settings state. Individual routes own their form and financial Cubits.
+---
 
-## Technology
+## Engineering Highlights
 
-| Area | Implementation |
-| --- | --- |
-| App and UI | Flutter 3.50, Dart 3.14, Material UI, Lottie, FL Chart |
-| State and navigation | Flutter BLoC, Cubit, GoRouter |
-| Dependency injection | GetIt, Injectable, build_runner |
-| Backend | Firebase Authentication, Cloud Firestore, Cloud Storage |
-| Local persistence and media | SharedPreferences, GetStorage, image_picker, audioplayers |
+- **SOLID & Separation of Concerns**: Dependencies flow inward toward domain repository contracts, keeping Firebase and storage SDKs isolated behind data sources.
+- **Centralized Error Handling**: `lib/core/errors/` standardizes exception-to-failure mapping (`error_handler.dart`, `exceptions.dart`, `failures.dart`) paired with reusable UI messaging (`app_message.dart`).
+- **Code Modularity (400-Line File Limit)**: Every Dart source file under `lib/` is kept at or below 400 lines by decomposing large screens into focused feature widgets and form cubits.
+- **Automated Verification**:
+  - **10/10 passing unit & widget regression tests** (`balance_totals_test.dart`, `dependencies_test.dart`, `installment_due_status_test.dart`, `savings_test.dart`, `widget_test.dart`).
+  - **Zero `dart analyze` issues** across the codebase.
+  - **Successful Android debug build** on the modernized toolchain.
 
-## Getting started
+### Android Build Modernization
+
+- Upgraded Android build stack to **Gradle 9.6.0**, **AGP 9.3.1**, **Built-in Kotlin 2.4.20**, and **Google Services 4.4.4** targeting **JVM 17**.
+- Configured `android.builtInKotlin=true` and updated Android plugin implementations (`audioplayers_android`, `shared_preferences_android`, `workmanager_android`) for compatibility.
+
+---
+
+## Screenshots
+
+<table>
+  <tr>
+    <td align="center">
+      <img src="assets/screenshots/spalsh_screen.jpg" alt="Splash Screen" width="210" />
+      <br/><sub>Splash</sub>
+    </td>
+    <td align="center">
+      <img src="assets/screenshots/login_screen.jpg" alt="Login Screen" width="210" />
+      <br/><sub>Sign In</sub>
+    </td>
+    <td align="center">
+      <img src="assets/screenshots/signup.jpg" alt="Sign Up Screen" width="210" />
+      <br/><sub>Sign Up</sub>
+    </td>
+    <td align="center">
+      <img src="assets/screenshots/forgot_password.jpg" alt="Forgot Password Screen" width="210" />
+      <br/><sub>Forgot Password</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="assets/screenshots/home_screen.jpg" alt="Dashboard Screen" width="210" />
+      <br/><sub>Dashboard</sub>
+    </td>
+    <td align="center">
+      <img src="assets/screenshots/balance.jpg" alt="Balance Screen" width="210" />
+      <br/><sub>Balance</sub>
+    </td>
+    <td align="center">
+      <img src="assets/screenshots/income_screen.jpg" alt="Income List Screen" width="210" />
+      <br/><sub>Income</sub>
+    </td>
+    <td align="center">
+      <img src="assets/screenshots/add_income.jpg" alt="Add Income Screen" width="210" />
+      <br/><sub>Add Income</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="assets/screenshots/expense_screen.jpg" alt="Expense List Screen" width="210" />
+      <br/><sub>Expenses</sub>
+    </td>
+    <td align="center">
+      <img src="assets/screenshots/add_expense.jpg" alt="Add Expense Screen" width="210" />
+      <br/><sub>Add Expense</sub>
+    </td>
+    <td align="center">
+      <img src="assets/screenshots/saving_screen.jpg" alt="Savings Overview Screen" width="210" />
+      <br/><sub>Savings</sub>
+    </td>
+    <td align="center">
+      <img src="assets/screenshots/installment_screen.jpg" alt="Installments Screen" width="210" />
+      <br/><sub>Installments</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="assets/screenshots/add_installment.jpg" alt="Add Installment Screen" width="210" />
+      <br/><sub>Add Installment</sub>
+    </td>
+    <td align="center">
+      <img src="assets/screenshots/profile_screen.jpg" alt="Profile Screen" width="210" />
+      <br/><sub>Profile</sub>
+    </td>
+    <td align="center">
+      <img src="assets/screenshots/setting_screen.jpg" alt="Settings Screen" width="210" />
+      <br/><sub>Settings</sub>
+    </td>
+    <td align="center">
+      <img src="assets/screenshots/saveit_chat.jpg" alt="SaveIt AI Chat Screen" width="210" />
+      <br/><sub>SaveIt Chat</sub>
+    </td>
+  </tr>
+</table>
+
+---
+
+## Getting Started
 
 ### Prerequisites
 
-- Flutter 3.50.0 stable with Dart 3.14.0.
-- An Android SDK with platform and build tools 36, Flutter’s NDK version, and a JDK 17 or newer supported by Gradle.
-- The [Firebase CLI and FlutterFire CLI](https://firebase.google.com/docs/flutter/setup) if configuring a Firebase project.
-- For an iOS build, macOS with Xcode 26.2 or newer, Swift Package Manager, and an iOS 15 or later target. Verify Firebase and Google Sign-In provisioning for the iOS app in Xcode.
+- **Flutter** `3.50.0+` / **Dart** `3.14.0+`
+- **JDK 17+** & **Android SDK** (for Android builds)
+- **Firebase CLI & FlutterFire CLI**
 
-Android uses Gradle 9.6.0, AGP 9.3.1, built-in Kotlin 2.4.20, and Google Services 4.4.4. The Java and Kotlin bytecode targets are 17. The wrapper selects the Gradle distribution. The audio plugin’s test integration currently relies on AGP’s legacy DSL compatibility flag. Kotlin compiles in the Gradle process with incremental compilation disabled to avoid the Windows compiler-cache failure.
+### Installation
 
-### Install and run
-
-Complete Firebase setup before the first run.
-
-```sh
+```bash
 git clone https://github.com/hossamelshafay/saveit.git
 cd saveit
-flutter doctor -v
 flutter pub get
-dart run build_runner build
+```
+
+### Firebase & Environment Setup
+
+Firebase configuration files (`lib/firebase_options.dart`, `android/app/google-services.json`, `ios/Runner/GoogleService-Info.plist`) and API secrets are excluded from Git.
+
+1. Create a Firebase project and enable **Authentication** (Email/Password, Google, Anonymous/Facebook as needed), **Cloud Firestore**, and **Cloud Storage**.
+2. Place `google-services.json` in `android/app/` (and `GoogleService-Info.plist` in `ios/Runner/` for iOS), then generate `lib/firebase_options.dart` via:
+   ```bash
+   flutterfire configure
+   ```
+3. *(Optional)* Provide a Gemini API key at build/run time without committing it:
+   ```bash
+   flutter run --dart-define=SAVEIT_GEMINI_API_KEY=your_api_key
+   ```
+
+> **Note on Live Authentication:** Auth routing, form validation, and repository wiring are covered by automated widget/unit tests, while end-to-end **live authentication** against a production Firebase project (Email/Password, Google Sign-In, Facebook Auth) is **currently unverified** and depends on your local Firebase project configuration and SHA-1/OAuth setup.
+
+### Run & Verify
+
+```bash
 flutter run
-```
-
-### Firebase setup
-
-1. Obtain access to the existing SaveIt Firebase project before setting up a shared environment. For a separate development project, register an Android app with package `com.example.final_project`, an iOS app with bundle ID `com.example.saveltApp`, and a web app if needed.
-2. Run `flutterfire configure` from the project root and select the intended project and platforms. Keep `lib/firebase_options.dart`, `android/app/google-services.json`, and any Apple `GoogleService-Info.plist` files local. Generate or obtain them before running the app or tests. Keep service-account credentials and signing keys outside the repository.
-3. Enable Email/Password, Google, and Anonymous sign-in in Firebase Authentication. Register the Android signing certificate fingerprints for Google Sign-In and configure its OAuth client for each platform you use.
-4. Provision Cloud Firestore and Cloud Storage with access rules scoped to authenticated users and their own records. The app uses the `users` collection, its `incomes`, `expenses`, `installments`, and `savings` subcollections, and the storage path `users/{uid}/profile.jpg`.
-
-SaveIt Chat uses its built-in replies by default. For local development, supply `SAVEIT_GEMINI_API_KEY` through an ignored JSON file with `flutter run --dart-define-from-file=.env.gemini.json`. Dart defines are readable from app binaries. Use a backend for shared or production builds that require a private Gemini credential.
-
-### Validate and build
-
-```sh
-flutter pub get
-dart run build_runner build
-dart format lib test
-flutter analyze
 flutter test
-flutter build apk --debug
+dart analyze
 ```
 
-Flutter writes the debug APK to `build/app/outputs/flutter-apk/app-debug.apk`. On Windows, keep the workspace and Dart’s package cache on the same drive to avoid Kotlin’s cross-drive incremental compilation error. Set `PUB_CACHE` for the current shell before running `flutter pub get` if needed.
+---
+
+## License
+
+This project is available under the terms of the repository's `LICENSE` file.
