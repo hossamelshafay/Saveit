@@ -62,17 +62,19 @@ SaveIt follows a **Feature-first Clean Architecture** paired with **MVVM**:
 - **Domain Layer (`entities/`, `repositories/`)**: Pure Dart entities and abstract repository contracts decouple business rules from external SDKs.
 - **Data Layer (`data_sources/`, `models/`, `repositories/`)**: Concrete repository implementations coordinate Firebase (Auth, Firestore, Storage), local persistence (`SharedPreferences`, `GetStorage`), `Workmanager`, and Gemini AI.
 
+
 ```mermaid
 flowchart TB
-    UI["Presentation Layer\nScreens & Reusable Widgets"] --> Cubit["ViewModel Layer\nBLoC / Cubit"]
-    Router["GoRouter + Route Guards"] --> UI
-    Cubit --> RepoContract["Domain Layer\nEntities & Repository Contracts"]
-    RepoImpl["Data Layer\nRepository Implementations"] -. implements .-> RepoContract
-    RepoImpl --> Remote["Remote Data Sources\nFirebase Auth · Firestore · Storage · Gemini AI"]
-    RepoImpl --> Local["Local Data Sources\nSharedPreferences · GetStorage · Workmanager"]
-    DI["GetIt + Injectable\nDependency Injection"] --> Cubit
-    DI --> RepoImpl
+    Router["GoRouter + Route Guards"] --> UI["Presentation Layer<br/>Screens and Widgets"]
+    UI --> Cubit["ViewModel Layer<br/>BLoC / Cubit"]
+    Cubit --> Domain["Domain Layer<br/>Entities and Repository Contracts"]
+    Repo["Data Layer<br/>Repository Implementations"] -.-> Domain
+    Repo --> Remote["Remote Data Sources<br/>Firebase Auth - Firestore - Gemini AI"]
+    Repo --> Local["Local Data Sources<br/>SharedPreferences - GetStorage - WorkManager"]
+    DI["Dependency Injection<br/>GetIt + Injectable"] --> Cubit
+    DI --> Repo
 ```
+
 
 ### Project Structure
 
